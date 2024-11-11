@@ -1,95 +1,129 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+import {
+  Anchor,
+  AutocompleteProps,
+  Box,
+  Button,
+  Card,
+  Center,
+  Group,
+  rem,
+  Select,
+  SelectProps,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
+import { categories } from "./categories";
+import { TaxonomyChildren } from "@/types/TaxonomyNode.type";
+import { useState } from "react";
+import { IconCheck } from "@tabler/icons-react";
+
+function CategoryDropdown({
+  categories,
+  label,
+  onOptionSubmit,
+}: {
+  label: string;
+  categories: TaxonomyChildren;
+  onOptionSubmit: AutocompleteProps["onOptionSubmit"];
+}) {
+  const renderSelectOption: SelectProps["renderOption"] = ({ option, checked }) => {
+    //@ts-ignore
+    const childrenCount = option.childrenCount;
+    return (
+      <Group flex="1" gap="xs">
+        {checked && <IconCheck color="grey" />}
+
+        <Text style={{ flexGrow: 1 }}>{option.label}</Text>
+
+        <Text size="sm" c="dimmed">
+          ({childrenCount} children)
+        </Text>
+      </Group>
+    );
+  };
+
+  return (
+    <Select
+      label={label}
+      radius="lg"
+      size="md"
+      placeholder="Pick a value"
+      data={Object.entries(categories).map(([name, node]) => ({
+        label: name,
+        value: name,
+        childrenCount: Object.keys(node.children || {}).length,
+      }))}
+      onOptionSubmit={onOptionSubmit}
+      comboboxProps={{ transitionProps: { transition: "pop", duration: 200 } }}
+      renderOption={renderSelectOption}
+    />
+  );
+}
 
 export default function Home() {
+  const [selected, setSelected] = useState<string[]>([]);
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
+    <main>
+      <Stack h="100vh" justify="center" align="center" pos="relative" gap="xl">
+        <Title c="gray.8">Merchant Center Taxonomy Explorer</Title>
+
+        <Card radius="lg" withBorder shadow="md" w="450px" p="lg">
+          <Stack>
+            <CategoryDropdown
+              categories={categories}
+              label="Category"
+              onOptionSubmit={(value) => setSelected([value])}
             />
-          </a>
-        </div>
-      </div>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+            {selected.map((value, idx) => {
+              let options = selected.reduce(
+                (prev, option, i) => (i <= idx ? prev[option].children || {} : prev),
+                categories
+              );
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+              if (Object.keys(options).length === 0) return;
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+              return (
+                <CategoryDropdown
+                  key={value}
+                  categories={options}
+                  label={`Subcategory #${idx + 1}`}
+                  onOptionSubmit={(value) => setSelected([...selected.splice(0, idx + 1), value])}
+                />
+              );
+            })}
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
+            <Group>
+              <Button radius="lg">Copy ID</Button>
+              <Button radius="lg">Copy Name</Button>
+            </Group>
+          </Stack>
+        </Card>
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+        <Box w="100%" pos="absolute" bottom={0}>
+          <Center mb="xl">
+            <Stack px="xl" maw="1000px">
+              <Title order={3}>What is this tool?</Title>
+              <Text>
+                Including <code>google_product_category</code> in your Google Shopping feed is important because it
+                helps Google accurately categorize your products, improving their visibility in relevant searches.
+                Proper categorization enhances ad targeting, boosts click-through rates, and ensures compliance with
+                Google’s policies.
+              </Text>
+            </Stack>
+          </Center>
+          <Box bg="primary" p="sm" px="xl">
+            <Text c="white">
+              Made with ♥ by{" "}
+              <Anchor c="white" fw={600} href="https://shelfwizard.com" target="_blank">
+                Shelf Wizard
+              </Anchor>
+            </Text>
+          </Box>
+        </Box>
+      </Stack>
     </main>
   );
 }

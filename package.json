@@ -2,6 +2,7 @@
   "name": "merchant-center-taxonomy-explorer",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,13 +11,16 @@
     "pages:build": "npx @cloudflare/next-on-pages",
     "preview": "npm run pages:build && wrangler pages dev",
     "deploy": "npm run pages:build && wrangler pages deploy",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts"
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts",
+    "taxonomy:build": "tsx bin/buildTaxonomy.ts"
   },
   "dependencies": {
+    "@tabler/icons-react": "^3.21.0",
+    "axios": "^1.7.7",
     "next": "^14.2.17",
     "react": "^18",
     "react-dom": "^18",
-    "ts-node": "^10.9.2"
+    "tsx": "^4.19.2"
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.13.5",
