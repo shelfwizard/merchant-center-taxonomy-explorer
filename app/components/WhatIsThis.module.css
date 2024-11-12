@@ -1,0 +1,8 @@
+.caretClosed,
+.caretOpen {
+  transition: transform 200ms ease;
+}
+
+.caretOpen {
+  transform: rotate(90deg);
+}

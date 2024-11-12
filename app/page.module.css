@@ -1,0 +1,29 @@
+.mainWrapper {
+  min-height: 100dvh;
+  overflow: hidden;
+  @media (max-width: $mantine-breakpoint-xs) {
+    height: auto;
+    justify-content: space-between;
+  }
+  @media (min-width: $mantine-breakpoint-sm) {
+    height: auto;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.footer {
+  align-self: flex-end;
+
+  @media (min-width: $mantine-breakpoint-sm) {
+    position: absolute;
+    bottom: 0;
+  }
+}
+
+.footerLinks {
+  text-align: center;
+  @media (min-width: $mantine-breakpoint-sm) {
+    text-align: left;
+  }
+}

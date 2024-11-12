@@ -15,7 +15,7 @@ export function CategoryDropdown({
     //@ts-ignore
     const childrenCount = option.childrenCount;
     return (
-      <Group flex="1" gap="xs">
+      <Group flex="1" gap="xs" wrap="wrap" justify="end">
         {checked && <IconCheck color="grey" />}
 
         <Text style={{ flexGrow: 1 }}>{option.label}</Text>

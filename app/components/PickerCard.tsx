@@ -18,7 +18,8 @@ export function PickerCard({ categories }: { categories: TaxonomyChildren }) {
   return (
     <Card
       radius="lg"
-      w="450px"
+      w="100%"
+      maw="450px"
       p="lg"
       style={{
         boxShadow: "5px 5px 10px 0 rgba(194,92,130,0.3),-5px -5px 20px 0 rgba(255,188,166,0.3)",
@@ -53,7 +54,7 @@ export function PickerCard({ categories }: { categories: TaxonomyChildren }) {
             disabled={!selectedItem}
           />
 
-          <ButtonWithCopy label="Copy category name" valueToCopy={selectedCategory} disabled={!selectedCategory} />
+          <ButtonWithCopy label="Copy name" valueToCopy={selectedCategory} disabled={!selectedCategory} />
         </Group>
       </Stack>
     </Card>
