@@ -2,17 +2,40 @@ import "@mantine/core/styles.css";
 
 import { ColorSchemeScript, createTheme, MantineProvider } from "@mantine/core";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
+import { JsonLd } from "./components/JsonLd";
 
-const inter = Inter({ subsets: ["latin"] });
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+});
 
 export const metadata: Metadata = {
-  title: "Google Merchant Center taxonomy explorer",
+  title: "Shelf Wizard | Google Merchant Center Taxonomy Explorer",
   description: "Explore the Google taxonomy with ease!",
+  icons: [
+    {
+      sizes: "180x180",
+      url: "/favicon/apple-touch-icon.png",
+      rel: "apple-touch-icon",
+    },
+    {
+      sizes: "32x32",
+      url: "/favicon/favicon-32x32.png",
+      rel: "icon",
+    },
+    {
+      sizes: "16x16",
+      url: "/favicon/favicon-16x16.png",
+      rel: "icon",
+    },
+  ],
 };
 
 const theme = createTheme({
   primaryColor: "primary",
+  fontFamily: "Roboto, sans-serif",
+
   colors: {
     primary: [
       "#FFD6E1",
@@ -37,9 +60,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="home" href="https://google-taxonomy.shelfwizard.com" key="home" />
+        <link rel="canonical" href="https://google-taxonomy.shelfwizard.com" key={"en"} />
+        <meta name="publisher" content="Shelf Wizard" />
         <ColorSchemeScript />
+        <JsonLd />
       </head>
-      <body className={inter.className}>
+      <body className={roboto.className}>
         <MantineProvider theme={theme}>{children}</MantineProvider>
       </body>
     </html>

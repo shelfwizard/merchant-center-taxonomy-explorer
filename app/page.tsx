@@ -1,124 +1,86 @@
-"use client";
-import {
-  Anchor,
-  AutocompleteProps,
-  Box,
-  Button,
-  Card,
-  Center,
-  Group,
-  rem,
-  Select,
-  SelectProps,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
-import { categories } from "./categories";
-import { TaxonomyChildren } from "@/types/TaxonomyNode.type";
-import { useState } from "react";
-import { IconCheck } from "@tabler/icons-react";
+import { Anchor, Box, Center, Stack, Text, Title } from "@mantine/core";
+import { TaxonomyChildren, type TaxonomyNode } from "@/types/TaxonomyNode.type";
+import { PickerCard } from "./components/PickerCard";
 
-function CategoryDropdown({
-  categories,
-  label,
-  onOptionSubmit,
-}: {
-  label: string;
-  categories: TaxonomyChildren;
-  onOptionSubmit: AutocompleteProps["onOptionSubmit"];
-}) {
-  const renderSelectOption: SelectProps["renderOption"] = ({ option, checked }) => {
-    //@ts-ignore
-    const childrenCount = option.childrenCount;
-    return (
-      <Group flex="1" gap="xs">
-        {checked && <IconCheck color="grey" />}
+export async function getTaxonomy(): Promise<TaxonomyChildren> {
+  const TAXONOMY_URL = "https://www.google.com/basepages/producttype/taxonomy-with-ids.en-US.txt";
 
-        <Text style={{ flexGrow: 1 }}>{option.label}</Text>
+  const result = await fetch(TAXONOMY_URL).then((r) => r.text());
 
-        <Text size="sm" c="dimmed">
-          ({childrenCount} children)
-        </Text>
-      </Group>
-    );
-  };
+  const categories: { [key: string]: TaxonomyNode } = {};
 
-  return (
-    <Select
-      label={label}
-      radius="lg"
-      size="md"
-      placeholder="Pick a value"
-      data={Object.entries(categories).map(([name, node]) => ({
-        label: name,
-        value: name,
-        childrenCount: Object.keys(node.children || {}).length,
-      }))}
-      onOptionSubmit={onOptionSubmit}
-      comboboxProps={{ transitionProps: { transition: "pop", duration: 200 } }}
-      renderOption={renderSelectOption}
-    />
-  );
+  for (const row of result.split("\n")) {
+    // skip comments
+    if (!row || row.trim().startsWith("#")) continue;
+
+    const [id, fullName] = row.split(" - ");
+
+    const nameSegments = fullName.split(">").map((segment) => segment.trim());
+
+    let target: TaxonomyNode | null = null;
+    for (const segment of nameSegments) {
+      if (!target) {
+        categories[segment] ??= {};
+        target = categories[segment];
+      } else {
+        if (!target.children) target.children = {};
+        target.children[segment] ??= {};
+        target = target.children[segment];
+      }
+    }
+
+    if (target) target.id = Number.parseInt(id);
+  }
+
+  return categories;
 }
 
-export default function Home() {
-  const [selected, setSelected] = useState<string[]>([]);
+export default async function Home() {
+  const categories = await getTaxonomy();
   return (
     <main>
       <Stack h="100vh" justify="center" align="center" pos="relative" gap="xl">
-        <Title c="gray.8">Merchant Center Taxonomy Explorer</Title>
-
-        <Card radius="lg" withBorder shadow="md" w="450px" p="lg">
-          <Stack>
-            <CategoryDropdown
-              categories={categories}
-              label="Category"
-              onOptionSubmit={(value) => setSelected([value])}
-            />
-
-            {selected.map((value, idx) => {
-              let options = selected.reduce(
-                (prev, option, i) => (i <= idx ? prev[option].children || {} : prev),
-                categories
-              );
-
-              if (Object.keys(options).length === 0) return;
-
-              return (
-                <CategoryDropdown
-                  key={value}
-                  categories={options}
-                  label={`Subcategory #${idx + 1}`}
-                  onOptionSubmit={(value) => setSelected([...selected.splice(0, idx + 1), value])}
-                />
-              );
-            })}
-
-            <Group>
-              <Button radius="lg">Copy ID</Button>
-              <Button radius="lg">Copy Name</Button>
-            </Group>
-          </Stack>
-        </Card>
+        <Title mb="xl" c="gray.8">
+          Merchant Center Taxonomy Explorer
+        </Title>
+        <PickerCard categories={categories} />
 
         <Box w="100%" pos="absolute" bottom={0}>
           <Center mb="xl">
             <Stack px="xl" maw="1000px">
-              <Title order={3}>What is this tool?</Title>
-              <Text>
+              <Title order={3} c="gray.8">
+                What is this tool?
+              </Title>
+              <Text c="gray.8">
                 Including <code>google_product_category</code> in your Google Shopping feed is important because it
                 helps Google accurately categorize your products, improving their visibility in relevant searches.
                 Proper categorization enhances ad targeting, boosts click-through rates, and ensures compliance with
-                Google’s policies.
+                Google's policies. This tool helps you navigate the complex taxonomy of Google by parsing their taxonomy
+                file and displaying it in an easy to use format.
               </Text>
             </Stack>
           </Center>
-          <Box bg="primary" p="sm" px="xl">
-            <Text c="white">
+          <Box
+            p="sm"
+            px="xl"
+            style={{
+              background:
+                "radial-gradient(39.05% 32.29% at 54.62% 65.05%, rgba(194, 92, 130, 0.2) 0%, rgba(194, 92, 130, 0) 100%), radial-gradient(85.61% 95.9% at 96.67% 34%, rgba(153, 89, 237, 0.2) 0%, rgba(255, 255, 255, 0) 100%), radial-gradient(62.77% 144.63% at 4.87% 13.17%, rgba(255, 238, 116, 0.3) 0%, rgba(255, 255, 255, 0) 100%)",
+            }}
+          >
+            <Text>
               Made with ♥ by{" "}
-              <Anchor c="white" fw={600} href="https://shelfwizard.com" target="_blank">
+              <Anchor fw={500} td="underline" href="https://shelfwizard.com" target="_blank">
                 Shelf Wizard
+              </Anchor>{" "}
+              | Get the source on{" "}
+              <Anchor
+                fw={500}
+                td="underline"
+                href="https://github.com/shelfwizard/merchant-center-taxonomy-explorer"
+                target="_blank"
+              >
+                Github
               </Anchor>
             </Text>
           </Box>
