@@ -2,9 +2,9 @@ import { Anchor, Box, Center, Stack, Text, Title } from "@mantine/core";
 import { TaxonomyChildren, type TaxonomyNode } from "@/types/TaxonomyNode.type";
 import { PickerCard } from "./components/PickerCard";
 
-export async function getTaxonomy(): Promise<TaxonomyChildren> {
-  const TAXONOMY_URL = "https://www.google.com/basepages/producttype/taxonomy-with-ids.en-US.txt";
+const TAXONOMY_URL = "https://www.google.com/basepages/producttype/taxonomy-with-ids.en-US.txt";
 
+async function getTaxonomy(): Promise<TaxonomyChildren> {
   const result = await fetch(TAXONOMY_URL).then((r) => r.text());
 
   const categories: { [key: string]: TaxonomyNode } = {};
@@ -55,8 +55,11 @@ export default async function Home() {
                 Including <code>google_product_category</code> in your Google Shopping feed is important because it
                 helps Google accurately categorize your products, improving their visibility in relevant searches.
                 Proper categorization enhances ad targeting, boosts click-through rates, and ensures compliance with
-                Google's policies. This tool helps you navigate the complex taxonomy of Google by parsing their taxonomy
-                file and displaying it in an easy to use format.
+                Google&apos;s policies. This tool helps you navigate the complex{" "}
+                <Anchor href={TAXONOMY_URL} target="_blank">
+                  taxonomy of Google Shopping
+                </Anchor>{" "}
+                by parsing their taxonomy file and displaying it in an easy to use format.
               </Text>
             </Stack>
           </Center>
@@ -70,7 +73,7 @@ export default async function Home() {
           >
             <Text>
               Made with ♥ by{" "}
-              <Anchor fw={500} td="underline" href="https://shelfwizard.com" target="_blank">
+              <Anchor fw={500} td="underline" href="https://shelfwizard.com/en?utm_source=google-taxo" target="_blank">
                 Shelf Wizard
               </Anchor>{" "}
               | Get the source on{" "}

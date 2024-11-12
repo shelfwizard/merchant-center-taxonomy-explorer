@@ -1,8 +1,17 @@
 {
   "name": "merchant-center-taxonomy-explorer",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
+  "description": "It's hard to explore the complete taxonomy of Google Merchant Center. With this tool it's much easier.",
+  "version": "1.0.0",
+  "license": "AGPL-3.0",
+  "author": {
+    "name": "Oscar Mărginean",
+    "email": "oscar@shelfwizard.com",
+    "url": "https://shelfwizard.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shelfwizard/merchant-center-taxonomy-explorer"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,16 +20,14 @@
     "pages:build": "npx @cloudflare/next-on-pages",
     "preview": "npm run pages:build && wrangler pages dev",
     "deploy": "npm run pages:build && wrangler pages deploy",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts",
-    "taxonomy:build": "tsx bin/buildTaxonomy.ts"
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts"
   },
   "dependencies": {
     "@tabler/icons-react": "^3.21.0",
     "axios": "^1.7.7",
     "next": "^14.2.17",
     "react": "^18",
-    "react-dom": "^18",
-    "tsx": "^4.19.2"
+    "react-dom": "^18"
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.13.5",
